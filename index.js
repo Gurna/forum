@@ -4,6 +4,7 @@ var cors = require("cors");
 const bodyParser= require("body-parser");
 const questionRouter = require("./routes/question");
 const answerRouter = require("./routes/answer");
+const userRouter = require("./routes/user");
 require("dotenv").config();
 
 const mongoose = require("mongoose");
@@ -15,6 +16,7 @@ app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(questionRouter);
 app.use(answerRouter);
+app.use(userRouter);
 
 mongoose.connect(process.env.MONGO_CONNECT)
 .then(()=>{
