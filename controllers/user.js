@@ -1,5 +1,7 @@
 
 const UserSchema = require("../models/user");
+const AnswerSchema = require("../models/answer");
+const QuestionSchema = require("../models/question");
 const bcrypt = require('bcryptjs');
 const jwt = require("jsonwebtoken");
 
@@ -79,4 +81,86 @@ return res.status(200).json({response: "User is successfully inserted", user: re
         res.status(500).json({response: "Error in inserting user in DB"});
     };
 };
+
+module.exports.GET_ALL_USERS = async (req, res)=>{
+    try{
+
+    const token =req.headers.authorization;
+    console.log("token", token);
+
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded)=>{
+        if(err){
+        return res.status(401).json({response: "Authorization failed"})
+        }
+        
+        const users = await UserSchema.find();
+        users.sort((a,b)=> a.name.localeCompare(b.name));
+        res.status(200).json({users: users});
+    });
+    }catch(err){
+        res.status(500).json({response: "Error in getting users"});
+    };
+};
+
+module.exports.GET_USER_BY_ID = async (req, res)=>{
+    try{
+
+        const token = req.headers.authorization;
+        console.log("token", token);
+
+        jwt.verify(token, process.env.JWT_SECRET, async (err, decoded)=>{
+            if(err){
+            return res.status(401).json({response: "Authorization failed"})
+            }
+
+    const users = await UserScema.findOne({id:req.params.id});
+    res.status(200).json({users: users});
+    });
+}catch(err){ 
+        res.status(500).json({response: "Error in getting users"});
+    };
+};
+
+module.exports.POST_ANSWER = async (req, res)=>{
+  try{
+    const user = await UserSchema.findOne({id:req.body.id});
+    const answer = await AnswerSchema.findOne({answer_id:req.body.answer_id});
+
+    await UserSchema.updateOne(
+      {id:req.body.id},
+      {
+        $push: {given_answers: answer.answer_id}
+        
+      }
+    );
+
+    res.status(200).json({response: "Answer is assigned", answer: answer});
+
+  }catch(err){
+    console.log("err", err);
+    res.status(500).json({response: "error assigning the answer"});
+  }
+};
+
+module.exports.POST_QUESTION = async (req, res)=>{
+  try{
+    const user = await UserSchema.findOne({id:req.body.id});
+    const question = await QuestionSchema.findOne({_id:req.body._id});
+
+    await UserSchema.updateOne(
+      {id:req.body.id},
+      {
+        $push: {given_questions: question._id}
+        
+      }
+    );
+
+    res.status(200).json({response: "Question is assigned", question: question});
+
+  }catch(err){
+    console.log("err", err);
+    res.status(500).json({response: "error assigning the question"});
+  }
+};
+
 

@@ -1,4 +1,5 @@
 const QuestionSchema = require("../models/question");
+const AnswerSchema = require("../models/answer");
 
 module.exports.POST_QUESTION = async function (req, res) {
   try {
@@ -20,6 +21,27 @@ module.exports.POST_QUESTION = async function (req, res) {
   } catch (err) {
     console.log("err", err);
     res.status(500).json({ response: "Failed to post question" });
+  }
+};
+
+module.exports.ASSIGN_ANSWER = async (req, res)=>{
+  try{
+    const question = await QuestionSchema.findOne({_id:req.body._id});
+    const answer = await AnswerSchema.findOne({answer_id:req.body.answer_id});
+
+    await QuestionSchema.updateOne(
+      {_id:req.body._id},
+      {
+        $push: {answers: answer.answer_id}
+        
+      }
+    );
+
+    res.status(200).json({response: "Answer is assigned", answer: answer});
+
+  }catch(err){
+    console.log("err", err);
+    res.status(500).json({response: "error assigning the answer"});
   }
 };
 
