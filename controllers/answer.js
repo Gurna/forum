@@ -7,7 +7,7 @@ module.exports.POST_ANSWER = async function (req, res) {
     const answer = new AnswerSchema({
       date: req.body.date,
       author: req.body.author,
-      description:req.body.description,
+      answer_description:req.body.answer_description,
       answer_id: req.body.answer_id
     });
 

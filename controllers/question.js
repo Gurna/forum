@@ -54,6 +54,26 @@ module.exports.GET_QUESTIONS = async function (req, res) {
     res.status(500).json({ response: "Failed to get questions" });
   }
 };
+
+module.exports.GET_QUESTION = async function (req, res){
+  try{
+    const result = await QuestionSchema.findOne({_id:req.params.id}).exec();
+
+    const questions = await QuestionSchema.find({
+      answers: {$all: [req.body.answer_id, req.body.description]},
+      _id: result._id,
+      description: result.description,
+    }).exec();
+
+    const isQuestionAnswered = questions.lenght === 0? false : true;
+
+    return res.status(200).json({question: result, isQuestionAnswered: isQuestionAnswered});
+
+  }catch (err) {
+    console.log("err", err);
+    res.status(500).json({ response: "Failed" });
+  }
+};
 module.exports.DELETE_QUESTION_BY_ID = async (req, res) => {
   try {
     await QuestionSchema.deleteOne({ _id: req.params.id }).exec();
