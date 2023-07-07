@@ -60,9 +60,9 @@ module.exports.GET_QUESTION = async function (req, res){
     const result = await QuestionSchema.findOne({_id:req.params.id}).exec();
 
     const questions = await QuestionSchema.find({
-      answers: {$all: [req.body.answer_id, req.body.description]},
+     answers: {$all: [req.body.answer_id, req.body.answer_description]},
       _id: result._id,
-      description: result.description,
+      answer_description: result.answer_description,
     }).exec();
 
     const isQuestionAnswered = questions.lenght === 0? false : true;
