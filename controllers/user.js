@@ -18,13 +18,20 @@ module.exports.SIGN_UP = async (req, res)=>{
         if (user_password.length < 6 || !hasNumber) {
             return res.status(400).json({ res: 'Password should have at least 6 symbols and number in it' });
     }
-    const newUser = await UserSchema.findOne({
-      user_name: req.body.user_name, 
-      user_email: req.body.user_email, 
-      user_password: req.body.user_password,
-      user_photo: req.body.user_photo,
-      user_position: req.body.user_position
-    });
+
+    bcrypt.genSalt(10,(err, salt)=>{
+      bcrypt.hash(req.body.user_password, salt, async (err, hash)=>{
+        const newUser = await UserSchema.findOne({
+          user_name: req.body.user_name, 
+          user_email: req.body.user_email, 
+          user_password: hash,
+          user_photo: req.body.user_photo,
+          user_position: req.body.user_position
+        });
+        const result= await user.save();
+        })
+      });
+  
     if (newUser) {
       return res.status(400).json({ res: 'User with the given data already exists' });
     }
@@ -67,8 +74,6 @@ module.exports.LOGIN = async (req, res) => {
       res.status(500).json({ response: "Smth went wrong, please try later" });
     }
   };
-
-
 
 module.exports.INSERT_USER = async (req, res)=>{
     try{
