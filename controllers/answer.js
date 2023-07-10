@@ -24,7 +24,7 @@ module.exports.POST_ANSWER = async function (req, res) {
 
 module.exports.DELETE_ANSWER_BY_ID = async (req, res) => {
     try {
-      await EventSchema.deleteOne({ _id: req.params.id }).exec();
+      await AnswerSchema.deleteOne({_id: req.params._id }).exec();
   
       return res.status(200).json({ statusMessage: "deleted successfully" });
     } catch (err) {

@@ -1,5 +1,6 @@
 const QuestionSchema = require("../models/question");
 const AnswerSchema = require("../models/answer");
+const UserSchema = require('../models/user');
 
 module.exports.POST_QUESTION = async function (req, res) {
   try {
